@@ -18,10 +18,16 @@ export GOPATH=~/go
 export PATH=$PATH:$GOPATH/bin
 GO111MODULE=on
 
+go install github.com/tc-hib/go-winres@latest
+
 cd traefik
 
 make clean-webui generate-webui
 go generate
+
+#Icon isn't working (yet) not sure why....maybe we should try a .ico file instead of png or possible a dir struct issue
+go-winres simply --icon docs/content/assets/img/traefikproxy-icon-color.png --out ./rsrc/rsrc --arch amd64
+
 go build ./cmd/traefik
 GOOS=windows GOARCH=amd64 go build -o bin/traefik.exe ./cmd/traefik
 
@@ -32,6 +38,11 @@ GOOS=windows GOARCH=amd64 go build -o bin/traefik.exe ./cmd/traefik
 #https://freshman.tech/snippets/go/cross-compile-go-programs/
 #https://go.dev/dl/
 #https://go.dev/doc/install
+
+
+#https://stackoverflow.com/questions/25602600/how-do-you-set-the-application-icon-in-golang
+Warning: copied rsrc_windows_386.syso rsrc_windows_amd64.syso to rsrc as this is the actual placement of the resources
+
 
 #https://github.com/dariopb/traefik/commit/59ddd4730a71ca6a82312113bb97320283ab35f2
 
