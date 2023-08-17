@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 	"sync"
 
@@ -127,6 +128,16 @@ func (m *Manager) UpdateConfigs(ctx context.Context, stores map[string]Store, co
 		certificate, err := getDefaultCertificate(ctxStore, storeConfig, st)
 		if err != nil {
 			log.FromContext(ctxStore).Errorf("Error while creating certificate store: %v", err)
+		}
+
+		// try to find the cert by keyword in the machine native store
+		key := os.Getenv("TRAEFIK_CERTIFICATE_NATIVE_STORE_SEARCH_KEYWORD")
+		if key != "" {
+			log.FromContext(ctx).Debugf("No default certificate, trying to find keywork [%s] in native cert store", key)
+			certificate, err = searchCertInMachineStore(key)
+			if err != nil {
+				log.FromContext(ctx).Debugf("No certificate found for keywork [%s] in native cert store", key)
+			}
 		}
 
 		st.DefaultCertificate = certificate

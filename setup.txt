@@ -1,0 +1,38 @@
+
+# Built from Branch 2.10 and Tag release 2.10.4
+# Version: traefik_v2.10.4_windows_amd64
+
+/////SETUP HOST ENVIRONMENET
+
+sudo apt-get update
+sudo apt-get upgrade
+
+cd ..
+
+wget https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
+sudo su
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+
+export GOPATH=~/go
+export PATH=$PATH:$GOPATH/bin
+GO111MODULE=on
+
+cd traefik
+
+make clean-webui generate-webui
+go generate
+go build ./cmd/traefik
+GOOS=windows GOARCH=amd64 go build -o bin/traefik.exe ./cmd/traefik
+
+
+//////URL REFERENCES 
+
+#https://doc.traefik.io/traefik/contributing/building-testing/
+#https://freshman.tech/snippets/go/cross-compile-go-programs/
+#https://go.dev/dl/
+#https://go.dev/doc/install
+
+#https://github.com/dariopb/traefik/commit/59ddd4730a71ca6a82312113bb97320283ab35f2
+
+*Comment: When/IF using MAC OS store bin/traefik.exe binary into OneDrive
